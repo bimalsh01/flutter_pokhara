@@ -1,3 +1,4 @@
+const Order = require("../model/orderModel");
 const Product = require("../model/productModel");
 const cloudinary = require("cloudinary");
 
@@ -80,8 +81,72 @@ const deleteProduct = async (req,res) =>{
 }
 
 
+// order product:
+const orderProduct = async (req,res) =>{
+    console.log(req.body);
+    // step: 2 Destructuring
+    const {
+        orderId,
+        total,
+        payment,
+        cart,
+        address,
+        userId
+    } = req.body;
+
+    // step: 3 Validate
+    if(!orderId || !total || !cart || !address || !payment){
+        return res.send("Enter all the fields!!");
+    }
+
+    try {
+        // step 4 : Save the order to database
+        const newOrder = new Order({
+            orderId : orderId,
+            total : total,
+            cart : cart,
+            address : address,
+            payment : payment,
+            userId : userId
+        })
+        await newOrder.save();
+        res.json({
+            message : "Order created successfully!!",
+            newOrder
+        })
+        
+    } catch (error) {
+        console.log(error);
+        res.send ("Server error!");
+    }
+
+
+}
+
+// getOrders by id
+const getOrdersbyId = async (req,res) =>{
+    try {
+        const userId = req.params.id;
+        const orders = await Order.find({userId : userId});
+        res.json({
+            message : "Order fetched successfully!!",
+            orders : orders
+        })
+        
+    } catch (error) {
+        console.log(error);
+        res.send("Server error!");
+    }
+}
+
+
+
+
+
 module.exports = {
     createProduct,
     getAllProducts,
-    deleteProduct
+    deleteProduct,
+    orderProduct,
+    getOrdersbyId
 };

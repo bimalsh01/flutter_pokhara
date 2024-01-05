@@ -59,7 +59,7 @@ const loginUser = async (req,res) =>{
             return res.send("Password is incorrect!!")
         }
 
-        res.send("Welcome to dashboard!!")
+        res.send(existingUser)
 
         
     } catch (error) {
